@@ -1,0 +1,15 @@
+// build folder
+*/*obj/
+*/obj/
+
+// Library
+*/*.a
+
+// object file
+*/*.o
+
+// Other
+*/*.DS_Store
+
+// pre make
+*/*.h.gch
