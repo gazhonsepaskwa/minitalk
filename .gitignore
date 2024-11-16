@@ -1,12 +1,17 @@
-*/*obj/
-*/obj/
+# generic
 
-*/*.a
+obj/
+build/
 
-*/*.o
-
-*/*.DS_Store
-
-*/*.h.gch
+**.a
+**.o
+**.DS_Store
+**.h.gch
 
 .vscode
+**.out
+
+# specific
+
+client
+server

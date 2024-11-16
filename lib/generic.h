@@ -1,22 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.h                                           :+:      :+:    :+:   */
+/*   generic.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nalebrun <nalebrun@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/13 14:41:34 by nalebrun          #+#    #+#             */
-/*   Updated: 2024/11/16 10:13:04 by nalebrun         ###   ########.fr       */
+/*   Created: 2024/11/16 10:39:30 by nalebrun          #+#    #+#             */
+/*   Updated: 2024/11/16 10:56:50 by nalebrun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../lib/lib.h"
+#ifndef GENERIC_H
+# define GENERIC_H
 
-#ifndef SERVER_H
-# define SERVER_H
-
-# include <unistd.h>
-# include <signal.h>
-
+# define RED "\033[31m"
 
 #endif
