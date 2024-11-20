@@ -6,7 +6,7 @@
 /*   By: nalebrun <nalebrun@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/16 10:39:30 by nalebrun          #+#    #+#             */
-/*   Updated: 2024/11/16 10:56:50 by nalebrun         ###   ########.fr       */
+/*   Updated: 2024/11/20 16:17:57 by nalebrun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,7 @@
 # define GENERIC_H
 
 # define RED "\033[31m"
+# define FALSE 0
+# define TRUE 1
 
 #endif
