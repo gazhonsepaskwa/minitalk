@@ -1,20 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.h                                           :+:      :+:    :+:   */
+/*   client_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nalebrun <nalebrun@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/13 14:41:34 by nalebrun          #+#    #+#             */
-/*   Updated: 2024/11/22 11:43:06 by nalebrun         ###   ########.fr       */
+/*   Created: 2024/11/22 10:46:58 by nalebrun          #+#    #+#             */
+/*   Updated: 2024/11/22 14:10:03 by nalebrun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_H
-# define SERVER_H
+#include "client.h"
 
-# include "../lib/lib.h"
-# include <signal.h>
-# include <unistd.h>
+int	onlydigit(char *str)
+{
+	int	i;
 
-#endif
+	i = 0;
+	while (str[i])
+		if (!ft_isdigit(str[i++]))
+			return (0);
+	return (1);
+}

@@ -6,39 +6,35 @@
 /*   By: nalebrun <nalebrun@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 14:41:25 by nalebrun          #+#    #+#             */
-/*   Updated: 2024/11/20 16:38:51 by nalebrun         ###   ########.fr       */
+/*   Updated: 2024/11/22 14:29:11 by nalebrun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.h"
 
-int g_wait = FALSE;
-
-void	sig_hdlr(int sig)
+void	sig_hdlr(int sig, siginfo_t* info, void *context)
 {
 	static int	i;
 	static int	c;
 
-	if (sig == SIGUSR2)
+	(void)context;
+	if (sig == SIGUSR1 || sig == SIGUSR2)
 	{
-		i++;
 		c = c << 1;
-		c += 1;
-		//ft_printf("[DEBUG] 1\n");
-	}
-	if (sig == SIGUSR1)
-	{
+		if (sig == SIGUSR2)
+			c += 1;
 		i++;
-		c = c << 1;
-		//ft_printf("[DEBUG] 0\n");
+		if (i == 8)
+		{
+			write(1, &c, 1);
+			i = 0;
+			c = 0;
+		}
 	}
-	if (i == 8)
-	{
-		//t_printf("[DEBUG] print char ascii = {%d}\n\n", c);
-		write(1, &c, 1);
-		i = 0;
-		c = 0;
-	}
+		ft_printf("[DEBUG]");
+
+	kill(info->si_pid, SIGUSR1);
+		ft_printf("[DEBUG]");
 }
 
 
@@ -47,7 +43,7 @@ int	main(void)
 	struct sigaction	sa1;
 	struct sigaction	sa2;
 
-	sa1.sa_handler = sig_hdlr;
+	sa1.sa_sigaction = sig_hdlr;
 	sigemptyset(&sa1.sa_mask);
 	sa1.sa_flags = 0;
 	if (sigaction(SIGUSR1, &sa1, NULL) == -1)
@@ -55,7 +51,7 @@ int	main(void)
 		ft_printf("%sSigaction error", RED);
 		return (1);
 	}
-	sa2.sa_handler = sig_hdlr;
+	sa2.sa_sigaction = sig_hdlr;
 	sigemptyset(&sa2.sa_mask);
 	sa2.sa_flags = 0;
 	if (sigaction(SIGUSR2, &sa2, NULL) == -1)

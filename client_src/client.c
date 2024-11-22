@@ -6,7 +6,7 @@
 /*   By: nalebrun <nalebrun@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 14:41:31 by nalebrun          #+#    #+#             */
-/*   Updated: 2024/11/20 16:41:27 by nalebrun         ###   ########.fr       */
+/*   Updated: 2024/11/22 14:20:23 by nalebrun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,71 +14,86 @@
 
 int g_wait = FALSE;
 
-static int	onlydigit(char *str)
+void sig_hdlr(int sig)
 {
-	int	i;
-
-	i = 0;
-	while (str[i])
-		if (!ft_isdigit(str[i++]))
-			return (0);
-	return (1);
+	if (sig == SIGUSR1)
+	{
+		g_wait = FALSE;
+		ft_printf("ack");
+	}
 }
 
-static int	onlyprintable(char *str)
+void send_char(int pid, char c)
 {
-	int	i;
+	int j;
 
-	i = 0;
-	while (str[i])
-		if (!ft_isprint(str[i++]))
-			return (0);
-	return (1);
+	j = 8;
+	while (j > 0)
+	{
+		while(g_wait == TRUE)
+			usleep(1);
+		if (((c >> (j - 1)) & 1) == 1)
+		{
+			kill(pid, SIGUSR2);
+			usleep(50);
+			g_wait = TRUE;
+		}
+		if (((c >> (j - 1)) & 1) == 0)
+		{
+			kill(pid, SIGUSR1);
+			usleep(50);
+			g_wait = TRUE;
+		}
+		j--;
+	}
+	return ;
 }
 
 static void	send_message(int pid, char *msg)
 {
 	int	i;
-	int	j;
 
 	i = 0;
 	while (msg[i])
 	{
-		j = 8;
-		while (j > 0)
-		{
-			if (((msg[i] >> (j - 1)) & 1) == 1)
-			{
-				kill(pid, SIGUSR2);
-				usleep(50);
-			}
-			if (((msg[i] >> (j - 1)) & 1) == 0)
-			{
-				kill(pid, SIGUSR1);
-				usleep(50);
-			}
-			j--;
-		}
+		send_char(pid, msg[i]);
 		i++;
 	}
 }
 
-int	main(int ac, char **av)
+static int base_check(int ac, char **av)
 {
 	if (ac != 3)
 	{
 		ft_printf("%sInvalide usage: plz use the folowing structue :\n", RED);
 		ft_printf("client <SRV_PID> <MSG>\n");
-		return (1);
+		return (0);
 	}
 	if (av[1] == NULL || av[2] == NULL)
 	{
 		ft_printf("%sNieter SRV_PID or MSG can be NULL", RED);
-		return (1);
+		return (0);
 	}
 	if (!onlydigit(av[1]))
 	{
 		ft_printf("%sInvalide PID please reffer to the server", RED);
+		return (0);
+	}
+	return (1);
+}
+
+int	main(int ac, char **av)
+{
+	struct sigaction sa;
+
+	if (base_check(ac, av) == FALSE)
+		return (1);
+	sa.sa_handler = sig_hdlr;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_SIGINFO;
+	if (sigaction(SIGUSR1, &sa, NULL) == -1)
+	{
+		ft_printf("%sSigaction error", RED);
 		return (1);
 	}
 	send_message(ft_atoi(av[1]), av[2]);
