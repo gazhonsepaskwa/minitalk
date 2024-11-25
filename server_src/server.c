@@ -6,7 +6,7 @@
 /*   By: nalebrun <nalebrun@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 14:41:25 by nalebrun          #+#    #+#             */
-/*   Updated: 2024/11/22 14:29:11 by nalebrun         ###   ########.fr       */
+/*   Updated: 2024/11/25 07:06:59 by nalebrun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,17 @@ void	sig_hdlr(int sig, siginfo_t* info, void *context)
 		if (sig == SIGUSR2)
 			c += 1;
 		i++;
+		//ft_printf("[DEBUG] %d/8 bit received\n", i);
 		if (i == 8)
 		{
+			if (c == 0)
+				ft_printf("\nfull message receved. NOTE: send back to the client the acknowlegement\n");
 			write(1, &c, 1);
 			i = 0;
 			c = 0;
 		}
 	}
-		ft_printf("[DEBUG]");
-
 	kill(info->si_pid, SIGUSR1);
-		ft_printf("[DEBUG]");
 }
 
 
@@ -45,7 +45,7 @@ int	main(void)
 
 	sa1.sa_sigaction = sig_hdlr;
 	sigemptyset(&sa1.sa_mask);
-	sa1.sa_flags = 0;
+	sa1.sa_flags = SA_SIGINFO;
 	if (sigaction(SIGUSR1, &sa1, NULL) == -1)
 	{
 		ft_printf("%sSigaction error", RED);
@@ -53,7 +53,7 @@ int	main(void)
 	}
 	sa2.sa_sigaction = sig_hdlr;
 	sigemptyset(&sa2.sa_mask);
-	sa2.sa_flags = 0;
+	sa2.sa_flags = SA_SIGINFO;
 	if (sigaction(SIGUSR2, &sa2, NULL) == -1)
 	{
 		ft_printf("%sSigaction error", RED);

@@ -6,7 +6,7 @@
 /*   By: nalebrun <nalebrun@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 14:41:31 by nalebrun          #+#    #+#             */
-/*   Updated: 2024/11/22 14:20:23 by nalebrun         ###   ########.fr       */
+/*   Updated: 2024/11/25 07:08:07 by nalebrun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void sig_hdlr(int sig)
 	if (sig == SIGUSR1)
 	{
 		g_wait = FALSE;
-		ft_printf("ack");
+		//ft_printf(" ack ");
 	}
 }
 
@@ -31,17 +31,17 @@ void send_char(int pid, char c)
 	while (j > 0)
 	{
 		while(g_wait == TRUE)
-			usleep(1);
+		{
+			pause();
+		}
 		if (((c >> (j - 1)) & 1) == 1)
 		{
 			kill(pid, SIGUSR2);
-			usleep(50);
 			g_wait = TRUE;
 		}
 		if (((c >> (j - 1)) & 1) == 0)
 		{
 			kill(pid, SIGUSR1);
-			usleep(50);
 			g_wait = TRUE;
 		}
 		j--;
@@ -59,6 +59,7 @@ static void	send_message(int pid, char *msg)
 		send_char(pid, msg[i]);
 		i++;
 	}
+	send_char(pid, '\0');
 }
 
 static int base_check(int ac, char **av)
