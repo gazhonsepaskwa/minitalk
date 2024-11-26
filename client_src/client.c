@@ -6,7 +6,7 @@
 /*   By: nalebrun <nalebrun@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/13 14:41:31 by nalebrun          #+#    #+#             */
-/*   Updated: 2024/11/25 07:08:07 by nalebrun         ###   ########.fr       */
+/*   Updated: 2024/11/25 15:21:46 by nalebrun         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,10 @@ void sig_hdlr(int sig)
 	}
 }
 
-void send_char(int pid, char c)
+int	send_char(int pid, char c)
 {
 	int j;
+	int i;
 
 	j = 8;
 	while (j > 0)
@@ -36,30 +37,43 @@ void send_char(int pid, char c)
 		}
 		if (((c >> (j - 1)) & 1) == 1)
 		{
-			kill(pid, SIGUSR2);
-			g_wait = TRUE;
+			if (kill(pid, SIGUSR2) == -1)
+				return (-1);
+			g_wait = 2;
 		}
 		if (((c >> (j - 1)) & 1) == 0)
 		{
-			kill(pid, SIGUSR1);
-			g_wait = TRUE;
+			if (kill(pid, SIGUSR1) == -1)
+				return (-1);
+			g_wait  = 2;
 		}
-		j--;
+		i = 0;
+		while (++i < 3)
+		{
+			if (g_wait == FALSE)	
+				break;
+			sleep(1);	
+		}
+
+		if (g_wait == FALSE)
+			j--;
 	}
-	return ;
+	return (0);
 }
 
-static void	send_message(int pid, char *msg)
+static int	send_message(int pid, char *msg)
 {
 	int	i;
 
 	i = 0;
 	while (msg[i])
 	{
-		send_char(pid, msg[i]);
+		if (send_char(pid, msg[i]) == -1)
+			return (-1);
 		i++;
 	}
 	send_char(pid, '\0');
+	return (0);
 }
 
 static int base_check(int ac, char **av)
